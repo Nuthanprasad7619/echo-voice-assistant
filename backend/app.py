@@ -94,22 +94,28 @@ from duckduckgo_search import DDGS
 
 def search_duckduckgo(query):
     try:
+        print(f"Searching for: {query}") # Debug Log
         with DDGS() as ddgs:
             # 1. Try 'answers' for direct questions (e.g. "who is...")
             try:
-                # Force region to 'us-en' for English results
+                # Removed forcing region to allow broader results
                 answers = list(ddgs.answers(query)) 
                 if answers:
+                    print(f"Answer found: {answers[0]['text']}")
                     return f"Answer: {answers[0]['text']}"
-            except:
+            except Exception as e:
+                print(f"DDG Answers Error: {e}")
                 pass
 
             # 2. Keyless Fallback: Standard Text Search (Limit to 2 results)
-            # Region 'us-en' ensures English results even if server is in Asia
-            results = list(ddgs.text(query, region='us-en', max_results=2))
+            # Removed 'us-en' region constraint to fix empty results for some queries
+            results = list(ddgs.text(query, max_results=3)) 
             if results:
+                print(f"Text results found: {len(results)}")
                 summary = " ".join([r['body'] for r in results])
-                return f"Here is what I found: {summary[:300]}..." # Limit length for TTS
+                return f"Here is what I found: {summary[:350]}..." # Limit length for TTS
+            else:
+                print("No text results found.")
                 
     except Exception as e:
         print(f"Error searching DuckDuckGo: {e}")
