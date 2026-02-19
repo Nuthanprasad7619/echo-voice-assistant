@@ -96,7 +96,12 @@ def generate_response(intent, text):
         return f"It is {datetime.now().strftime('%I:%M %p')}."
     elif intent == 'date':
         return f"Today is {datetime.now().strftime('%A, %B %d, %Y')}."
-    elif intent == 'wikipedia_search':
+    
+    # Priority Regex Handlers (Before ML fallback)
+    if 'search for' in text.lower() or 'who is' in text.lower() or 'what is' in text.lower() or 'tell me about' in text.lower():
+        return search_wikipedia(text)
+        
+    if intent == 'wikipedia_search':
         return search_wikipedia(text)
     elif intent in responses_data:
         return random.choice(responses_data[intent])
@@ -104,9 +109,6 @@ def generate_response(intent, text):
     # Fallback/Regex Handlers
     if 'calculate' in text or re.search(r'\d+\s*[\+\-\*\/]', text):
         return calculate_math(text)
-    
-    if 'search for' in text.lower() or 'who is' in text.lower() or 'what is' in text.lower():
-        return search_wikipedia(text)
 
     return "I'm not exactly sure what you mean, but I'm learning every day!"
 
