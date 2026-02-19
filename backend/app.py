@@ -90,36 +90,46 @@ def predict_intent(text):
             return None
     return None
 
-from duckduckgo_search import DDGS
+try:
+    from ddgs import DDGS
+except ImportError:
+    from duckduckgo_search import DDGS
 
 def search_duckduckgo(query):
     try:
-        print(f"Searching for: {query}") # Debug Log
-        with DDGS() as ddgs:
-            # 1. Try 'answers' for direct questions (e.g. "who is...")
-            try:
-                # Removed forcing region to allow broader results
-                answers = list(ddgs.answers(query)) 
-                if answers:
-                    print(f"Answer found: {answers[0]['text']}")
-                    return f"Answer: {answers[0]['text']}"
-            except Exception as e:
-                print(f"DDG Answers Error: {e}")
-                pass
+        print(f"Searching for: {query}") 
 
-            # 2. Keyless Fallback: Standard Text Search (Limit to 2 results)
-            # Removed 'us-en' region constraint to fix empty results for some queries
-            results = list(ddgs.text(query, max_results=3)) 
+        # Check for "latest" intent
+        timelimit = None
+        if any(w in query.lower() for w in ['latest', 'current', 'news', 'today', 'now']):
+             timelimit = 'd' # Last day
+
+        with DDGS() as ddgs:
+            # Enforce 'us-en' region for better English results
+            # safesearch='moderate' to avoid inappropriate content
+            results = list(ddgs.text(query, region='us-en', safesearch='moderate', timelimit=timelimit, max_results=3)) 
+            
             if results:
                 print(f"Text results found: {len(results)}")
-                summary = " ".join([r['body'] for r in results])
-                return f"Here is what I found: {summary[:350]}..." # Limit length for TTS
+                # Combine results, but focus on the first one which is usually most relevant
+                top_result = results[0]
+                source_name = top_result.get('title', 'Source')
+                body_text = top_result.get('body', '')
+                
+                # Construct response with attribution
+                response = f"According to {source_name}: {body_text}"
+                
+                # Check length for TTS (approx 3 sentences or 350 chars)
+                if len(response) > 350:
+                    response = response[:347] + "..."
+                return response
             else:
                 print("No text results found.")
+                return "I couldn't find anything on the web about that right now."
                 
     except Exception as e:
         print(f"Error searching DuckDuckGo: {e}")
-    return "I couldn't find anything on the web about that."
+        return "I'm having trouble connecting to the internet."
 
 def generate_response(intent, text):
     # 1. Dynamic Handlers (Strictly matched first)
