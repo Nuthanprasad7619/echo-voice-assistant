@@ -32,7 +32,6 @@ ENV/
 backend/temp/*
 !backend/temp/.gitkeep
 backend/backend.log
-*.pkl
 
 # OS
 .DS_Store
