@@ -123,7 +123,7 @@ function removeTypingIndicator() {
 
 const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://127.0.0.1:5000'
-    : 'https://echo-voice-assistant-backend.onrender.com'; // Placeholder - Update with your actual Render URL after deployment
+    : 'https://echo-backend-to1l.onrender.com'; // Live Render Backend
 
 async function checkConnection() {
     try {
