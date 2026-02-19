@@ -95,9 +95,20 @@ from duckduckgo_search import DDGS
 def search_duckduckgo(query):
     try:
         with DDGS() as ddgs:
-            results = list(ddgs.text(query, max_results=1))
+            # 1. Try 'answers' for direct questions (e.g. "who is...")
+            try:
+                answers = list(ddgs.answers(query))
+                if answers:
+                    return f"Answer: {answers[0]['text']}"
+            except:
+                pass
+
+            # 2. Keyless Fallback: Standard Text Search (Limit to 2 results)
+            results = list(ddgs.text(query, max_results=2))
             if results:
-                return f"Here is what I found: {results[0]['body']}"
+                summary = " ".join([r['body'] for r in results])
+                return f"Here is what I found: {summary[:300]}..." # Limit length for TTS
+                
     except Exception as e:
         print(f"Error searching DuckDuckGo: {e}")
     return "I couldn't find anything on the web about that."
