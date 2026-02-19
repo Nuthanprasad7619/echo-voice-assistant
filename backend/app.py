@@ -90,6 +90,18 @@ def predict_intent(text):
             return None
     return None
 
+from duckduckgo_search import DDGS
+
+def search_duckduckgo(query):
+    try:
+        with DDGS() as ddgs:
+            results = list(ddgs.text(query, max_results=1))
+            if results:
+                return f"Here is what I found: {results[0]['body']}"
+    except Exception as e:
+        print(f"Error searching DuckDuckGo: {e}")
+    return "I couldn't find anything on the web about that."
+
 def generate_response(intent, text):
     # Dynamic handlers
     if intent == 'time':
@@ -97,20 +109,23 @@ def generate_response(intent, text):
     elif intent == 'date':
         return f"Today is {datetime.now().strftime('%A, %B %d, %Y')}."
     
-    # Priority Regex Handlers (Before ML fallback)
+    # Priority Regex Handlers (Search)
     if 'search for' in text.lower() or 'who is' in text.lower() or 'what is' in text.lower() or 'tell me about' in text.lower():
-        return search_wikipedia(text)
+        # Prefer DuckDuckGo for broader knowledge
+        return search_duckduckgo(text)
         
     if intent == 'wikipedia_search':
-        return search_wikipedia(text)
+        return search_duckduckgo(text) # Upgrade to DDG
     elif intent in responses_data:
         return random.choice(responses_data[intent])
     
     # Fallback/Regex Handlers
     if 'calculate' in text or re.search(r'\d+\s*[\+\-\*\/]', text):
         return calculate_math(text)
-
-    return "I'm not exactly sure what you mean, but I'm learning every day!"
+    
+    # Final Fallback: If intent is unknown or low confidence, search web
+    # (Simplified logic: if we reached here, local intents failed)
+    return search_duckduckgo(text)
 
 def calculate_math(text):
     try:
