@@ -97,14 +97,16 @@ def search_duckduckgo(query):
         with DDGS() as ddgs:
             # 1. Try 'answers' for direct questions (e.g. "who is...")
             try:
-                answers = list(ddgs.answers(query))
+                # Force region to 'us-en' for English results
+                answers = list(ddgs.answers(query)) 
                 if answers:
                     return f"Answer: {answers[0]['text']}"
             except:
                 pass
 
             # 2. Keyless Fallback: Standard Text Search (Limit to 2 results)
-            results = list(ddgs.text(query, max_results=2))
+            # Region 'us-en' ensures English results even if server is in Asia
+            results = list(ddgs.text(query, region='us-en', max_results=2))
             if results:
                 summary = " ".join([r['body'] for r in results])
                 return f"Here is what I found: {summary[:300]}..." # Limit length for TTS
