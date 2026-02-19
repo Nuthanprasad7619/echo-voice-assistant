@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echo AI - Advanced Voice Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="#home" class="logo">
+                <img src="assets/Gemini_Generated_Image_kuu0iekuu0iekuu0.png" alt="Echo AI Logo"
+                    class="logo-img-circle">
+                <span class="logo-text">ECHO</span>
+            </a>
+            <div class="nav-menu" id="navMenu">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#chat" class="nav-link">Chat</a>
+                <a href="#faq" class="nav-link">FAQ</a>
+                <a href="#about" class="nav-link">About</a>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <span class="hero-tag">AI VOICE ASSISTANT</span>
+                <h1 class="hero-title">
+                    Speak.<br>
+                    <span>Listen.</span><br>
+                    Connect.
+                </h1>
+                <p class="hero-desc">
+                    Experience the next generation of voice interaction. Echo understands your commands with precision
+                    and responds with personality.
+                </p>
+                <div class="hero-btns">
+                    <a href="#chat" class="btn btn-primary">
+                        <i class="fas fa-microphone"></i> Start Chatting
+                    </a>
+                    <a href="#about" class="btn btn-outline">
+                        <i class="fas fa-info-circle"></i> Learn More
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="visual-circle">
+                    <div class="visual-inner">
+                        <img src="assets/Generate_a_logo_202602171448.gif" alt="Echo Visual" class="logo-circle">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="chat" class="chat-section">
+            <div class="section-title">
+                <h2>Conversation</h2>
+            </div>
+            <div class="chat-wrapper">
+                <div class="assistant-panel">
+                    <div class="mic-container">
+                        <button class="mic-btn" id="micBtn">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                    </div>
+                    <div class="mic-status" id="statusText">Tap to Speak</div>
+                    <div class="talk-back-container">
+                        <span class="talk-back-label">Talk Back</span>
+                        <label class="switch">
+                            <input type="checkbox" id="talkBackToggle" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="assistant-info">
+                        <h3>Echo AI</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.8rem;">Online & Ready</p>
+                    </div>
+                </div>
+                <div class="chat-panel">
+                    <div class="chat-header">
+                        <span class="chat-title">Live Session</span>
+                        <button id="clearBtn"
+                            style="background:none; border:none; color:var(--text-secondary); cursor:pointer;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="chat-messages" id="conversationMessages">
+                        <div class="msg bot">
+                            <div class="msg-avatar">E</div>
+                            <div class="msg-content">
+                                <p>Hi! I'm Echo. How can I help you today? Try asking for the time, weather, or a joke!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-area">
+                        <input type="text" id="textInput" class="chat-input" placeholder="Type a message...">
+                        <button class="send-btn" id="sendBtn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" class="faq-section">
+            <div class="section-title">
+                <h2>Frequent Questions</h2>
+            </div>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-header">
+                        <span class="faq-title">What is Echo?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-content">
+                        <p>Echo is an advanced AI assistant designed to help with daily tasks, answer queries, and
+                            provide entertainment through voice and text.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-header">
+                        <span class="faq-title">How do I use voice commands?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-content">
+                        <p>Simply tap the microphone button or the floating mic icon on mobile, then speak naturally.
+                            Ensure your microphone permissions are enabled.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-header">
+                        <span class="faq-title">Is it free?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-content">
+                        <p>Yes, Echo is completely open-source and free to use for personal projects.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="about-section">
+            <div class="about-card">
+                <h2>About Echo</h2>
+                <p style="margin-top: 1rem; color: var(--text-secondary);">
+                    Built with Python, Flask, and Vanilla JS, Echo demonstrates the power of modern web technologies
+                    combined with local intent recognition logic.
+                    Redesigned in 2026 for a premium user experience.
+                </p>
+                <div style="margin-top: 2rem; display: flex; justify-content: center; gap: 2rem;">
+                    <div>
+                        <h3 style="color: var(--accent-secondary);">2.0</h3>
+                        <span style="font-size: 0.8rem; color: var(--text-secondary);">VERSION</span>
+                    </div>
+                    <div>
+                        <h3 style="color: var(--accent-primary);">Fast</h3>
+                        <span style="font-size: 0.8rem; color: var(--text-secondary);">RESPONSE</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Echo AI Assistant. Created by Nuthan.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
