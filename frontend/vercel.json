@@ -2,7 +2,5 @@
     "version": 2,
     "name": "echo-voice-assistant-frontend",
     "cleanUrls": true,
-    "framework": null,
-    "installCommand": "echo 'No install needed'",
-    "buildCommand": "echo 'No build needed'"
+    "framework": null
 }
