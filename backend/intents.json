@@ -1,0 +1,104 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": [
+        "Hi", "Hello", "Hey", "Good morning", "Good afternoon", "Good evening", "What's up", "How are you", "Greetings", "Yo", "Hola"
+      ],
+      "responses": [
+        "Hello! How can I help you today?",
+        "Hi there! Ready to assist.",
+        "Greetings! What's on your mind?",
+        "Hey! hope you're having a great day."
+      ]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": [
+        "Bye", "Goodbye", "See you later", "Take care", "Good night", "Exit", "Quit", "Farewell"
+      ],
+      "responses": [
+        "Goodbye! Have a wonderful day.",
+        "See you later!",
+        "Take care! Come back soon.",
+        "Farewell!"
+      ]
+    },
+    {
+      "tag": "thanks",
+      "patterns": [
+        "Thank you", "Thanks", "Thanks a lot", "I appreciate it", "Ty", "Thx"
+      ],
+      "responses": [
+        "You're welcome!",
+        "Happy to help!",
+        "Anytime!",
+        "Glad I could be of assistance."
+      ]
+    },
+    {
+      "tag": "about",
+      "patterns": [
+        "Who are you", "What are you", "What is your name", "Are you a robot", "Tell me about yourself", "Who made you"
+      ],
+      "responses": [
+        "I am Echo, an advanced AI assistant created to help you.",
+        "My name is Echo. I'm here to assist with your queries.",
+        "I'm an AI voice assistant, redesigned for a premium experience."
+      ]
+    },
+    {
+      "tag": "help",
+      "patterns": [
+        "Help", "What can you do", "Commands", "Assist me", "How does this work", "Features"
+      ],
+      "responses": [
+        "I can answer questions, search Wikipedia, tell jokes, and more. Just ask!",
+        "Try asking me about the weather, time, or famous people.",
+        "I'm here to help. You can speak or type your commands."
+      ]
+    },
+    {
+      "tag": "jokes",
+      "patterns": [
+        "Tell me a joke", "Make me laugh", "Say something funny", "Do you know any jokes", "Crack a joke"
+      ],
+      "responses": [
+        "Why don't scientists trust atoms? Because they make up everything!",
+        "I told my wife she was drawing her eyebrows too high. She looked surprised.",
+        "What do you call a fake noodle? An impasta!",
+        "Why did the scarecrow win an award? Because he was outstanding in his field."
+      ]
+    },
+    {
+      "tag": "time",
+      "patterns": [
+        "What time is it", "Current time", "Tell me the time", "Do you have the time"
+      ],
+      "responses": [
+        "The current time is {time}.",
+        "It is {time} right now."
+      ]
+    },
+    {
+      "tag": "date",
+      "patterns": [
+        "What is the date", "Today's date", "What day is it", "Current date"
+      ],
+      "responses": [
+        "Today is {date}.",
+        "The date is {date}."
+      ]
+    },
+    {
+        "tag": "wikipedia_search",
+        "patterns": [
+            "Who is", "What is", "Tell me about", "Information on", "Define", "Explain", "Search for"
+        ],
+        "responses": [
+            "Searching Wikipedia for...",
+            "Here is what I found on Wikipedia..."
+        ]
+    }
+  ]
+}
