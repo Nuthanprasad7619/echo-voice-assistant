@@ -114,28 +114,31 @@ def search_duckduckgo(query):
     return "I couldn't find anything on the web about that."
 
 def generate_response(intent, text):
-    # Dynamic handlers
+    # 1. Dynamic Handlers (Strictly matched first)
     if intent == 'time':
         return f"It is {datetime.now().strftime('%I:%M %p')}."
     elif intent == 'date':
         return f"Today is {datetime.now().strftime('%A, %B %d, %Y')}."
-    
-    # Priority Regex Handlers (Search)
-    if 'search for' in text.lower() or 'who is' in text.lower() or 'what is' in text.lower() or 'tell me about' in text.lower():
-        # Prefer DuckDuckGo for broader knowledge
+    elif intent == 'jokes' and ('joke' in text.lower() or 'laugh' in text.lower()):
+        return random.choice(responses_data[intent])
+
+    # 2. Universal Search Trigger
+    # If the user asks ANY question, prioritize DuckDuckGo over generic ML intents like 'greeting'.
+    question_words = ['who', 'what', 'where', 'when', 'why', 'how', 'is', 'can', 'does', 'do', 'search', 'tell me']
+    if any(word in text.lower().split() for word in question_words): # Check whole words
+        print(f"Question detected: '{text}' -> Triggering Search")
         return search_duckduckgo(text)
-        
-    if intent == 'wikipedia_search':
-        return search_duckduckgo(text) # Upgrade to DDG
-    elif intent in responses_data:
+
+    # 3. Fallback to ML Intent (Small Talk) using random response
+    # Only if it's NOT a question.
+    if intent in responses_data:
         return random.choice(responses_data[intent])
     
-    # Fallback/Regex Handlers
+    # 4. Regex Logic (Math)
     if 'calculate' in text or re.search(r'\d+\s*[\+\-\*\/]', text):
         return calculate_math(text)
     
-    # Final Fallback: If intent is unknown or low confidence, search web
-    # (Simplified logic: if we reached here, local intents failed)
+    # 5. Final Fallback (Everything else)
     return search_duckduckgo(text)
 
 def calculate_math(text):
