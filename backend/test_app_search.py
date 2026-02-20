@@ -21,11 +21,21 @@ def test_search_cases():
     res2 = search_duckduckgo(query2)
     print(f"Result 2: {res2}")
     
-    # Case 3: Current price (should trigger timelimit='d')
-    query3 = "current price of ethereum"
-    print(f"\nQuery 3: {query3}")
-    res3 = search_duckduckgo(query3)
-    print(f"Result 3: {res3}")
+    # Case 4: Logical Thinking (Wikipedia Integration)
+    query4 = "Who is the Prime Minister of India"
+    print(f"\nQuery 4: {query4}")
+    from app import generate_response, predict_intent # Import here to avoid circular issues if any
+    intent4 = predict_intent(query4)
+    res4 = generate_response(intent4, query4)
+    print(f"Result 4: {res4}")
+
+    query5 = "What is a mitochondrion"
+    print(f"\nQuery 5: {query5}")
+    res5 = generate_response(None, query5)
+    print(f"Result 5: {res5}")
 
 if __name__ == "__main__":
+    # Fix encoding for Windows console if needed
+    if sys.platform == 'win32':
+        sys.stdout.reconfigure(encoding='utf-8')
     test_search_cases()

@@ -95,24 +95,60 @@ try:
 except ImportError:
     from duckduckgo_search import DDGS
 
+def search_wikipedia(text):
+    """
+    Search Wikipedia for a summary of the query.
+    Used for specific "who/what is" questions to get a direct answer.
+    """
+    # Clean the query to get the key term
+    clean_query = text
+    for prefix in ["who is", "what is", "tell me about", "search for", "define"]:
+        if clean_query.lower().startswith(prefix):
+            clean_query = clean_query[len(prefix):].strip()
+            
+    print(f"Searching Wikipedia for: {clean_query}")
+    try:
+        # Get a brief summary (2 sentences is usually enough for TTS)
+        summary = wikipedia.summary(clean_query, sentences=2)
+        return summary
+    except wikipedia.exceptions.DisambiguationError as e:
+        # If ambiguous, try the first option
+        try:
+            return wikipedia.summary(e.options[0], sentences=2)
+        except:
+            return None
+    except wikipedia.exceptions.PageError:
+        return None # Fallback to DuckDuckGo
+    except Exception as e:
+        print(f"Wikipedia Error: {e}")
+        return None
+
 def search_duckduckgo(query):
     try:
         print(f"Searching for: {query}") 
 
         # Check for "latest" intent
         timelimit = None
-        if any(w in query.lower() for w in ['latest', 'current', 'news', 'today', 'now']):
+        if any(w in query.lower() for w in ['latest', 'current', 'news', 'today', 'now', 'price', 'stock']):
              timelimit = 'd' # Last day
 
         with DDGS() as ddgs:
             # Enforce 'us-en' region for better English results
-            # safesearch='moderate' to avoid inappropriate content
             results = list(ddgs.text(query, region='us-en', safesearch='moderate', timelimit=timelimit, max_results=3)) 
             
             if results:
                 print(f"Text results found: {len(results)}")
-                # Combine results, but focus on the first one which is usually most relevant
+                
+                # Intelligent Fallback: 
+                # If the top result is a Wikipedia entry, prefer the clean Wikipedia summary over the DDG snippet.
                 top_result = results[0]
+                if 'wikipedia.org' in top_result.get('href', ''):
+                    print("Top result is Wikipedia, attempting to get clean summary...")
+                    wiki_summary = search_wikipedia(top_result.get('title', '').replace(' - Wikipedia', ''))
+                    if wiki_summary:
+                        return f"According to Wikipedia: {wiki_summary}"
+
+                # Standard behavior
                 source_name = top_result.get('title', 'Source')
                 body_text = top_result.get('body', '')
                 
@@ -132,6 +168,16 @@ def search_duckduckgo(query):
         return "I'm having trouble connecting to the internet."
 
 def generate_response(intent, text):
+    # 0. High Priority Logic (Identity/Definitions) using Wikipedia
+    # We check this BEFORE intent classifiers because "Who is X" is often misclassified or needs better answers than search snippets.
+    text_lower = text.lower()
+    if any(text_lower.startswith(p) for p in ["who is", "what is", "tell me about", "define"]):
+        print(f"Identity question detected: '{text}' -> Trying Wikipedia")
+        wiki_res = search_wikipedia(text)
+        if wiki_res:
+            return f"According to Wikipedia: {wiki_res}"
+        # If Wikipedia fails, it falls through to standard search below
+
     # 1. Dynamic Handlers (Strictly matched first)
     if intent == 'time':
         return f"It is {datetime.now().strftime('%I:%M %p')}."
@@ -141,14 +187,12 @@ def generate_response(intent, text):
         return random.choice(responses_data[intent])
 
     # 2. Universal Search Trigger
-    # If the user asks ANY question, prioritize DuckDuckGo over generic ML intents like 'greeting'.
     question_words = ['who', 'what', 'where', 'when', 'why', 'how', 'is', 'can', 'does', 'do', 'search', 'tell me']
-    if any(word in text.lower().split() for word in question_words): # Check whole words
+    if any(word in text_lower.split() for word in question_words):
         print(f"Question detected: '{text}' -> Triggering Search")
         return search_duckduckgo(text)
 
-    # 3. Fallback to ML Intent (Small Talk) using random response
-    # Only if it's NOT a question.
+    # 3. Fallback to ML Intent (Small Talk)
     if intent in responses_data:
         return random.choice(responses_data[intent])
     
@@ -168,17 +212,15 @@ def calculate_math(text):
         pass
     return "I couldn't calculate that."
 
-def search_wikipedia(text):
-    clean_query = text.replace("who is", "").replace("what is", "").replace("tell me about", "").replace("search for", "").strip()
-    try:
-        summary = wikipedia.summary(clean_query, sentences=2)
-        return summary
-    except wikipedia.exceptions.DisambiguationError as e:
-        return f"There are multiple results for {clean_query}. Can you be more specific?"
-    except wikipedia.exceptions.PageError:
-        return f"I couldn't find anything about {clean_query} on Wikipedia."
-    except Exception as e:
-        return "I'm having trouble connecting to the knowledge base."
+# search_wikipedia is now defined above to be used by other functions.
+# Removing the old unused search_wikipedia definition at line 171 would be cleaner,
+# but our replacement covers the calls.
+# To be safe and clean, let's remove the old function if it exists or just ignore it 
+# since we overwrote the calls in generate_response.
+# Actually, the replacement above is large enough it replaces the old `search_duckduckgo` and `generate_response`.
+# We need to make sure we didn't leave a duplicate `search_wikipedia` at the bottom.
+# The original file had `search_wikipedia` at line 171. My replacement chunk ends at `calculate_math`. 
+# I should probably delete the old `search_wikipedia` to avoid confusion/errors.
 
 @app.route('/')
 def index():
