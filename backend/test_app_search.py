@@ -89,6 +89,30 @@ def test_search_cases():
     else:
         print("SUCCESS: Greeting handled correctly.")
 
+    # Case 8: Informational Keyword (no question word)
+    print("\n--- Testing Informational Keyword ---")
+    q8 = "pm of india"
+    print(f"User: {q8}")
+    intent8 = predict_intent(q8, model)
+    res8 = generate_response(intent8, q8, "test_session_8", ConversationManager(), responses_data)
+    print(f"Assistant: {res8[:50]}...")
+    if "According to" in res8 or "Searching" in res8 or "minister" in res8.lower():
+        print("SUCCESS: Informational query triggered search.")
+    else:
+        print("FAILED: Informational query misclassified as greeting.")
+
+    # Case 9: Multi-word query (Fallback check)
+    print("\n--- Testing Multi-word Fallback ---")
+    q9 = "capital of France" # No 'who/what', not in specific info_keywords (until I added 'capital')
+    print(f"User: {q9}")
+    intent9 = predict_intent(q9, model)
+    res9 = generate_response(intent9, q9, "test_session_9", ConversationManager(), responses_data)
+    print(f"Assistant: {res9[:50]}...")
+    if "According to" in res9 or "Searching" in res9 or "Paris" in res9:
+        print("SUCCESS: Multi-word query triggered search.")
+    else:
+        print("FAILED: Multi-word query failed to search.")
+
 if __name__ == "__main__":
     # Fix encoding for Windows console if needed
     if sys.platform == 'win32':

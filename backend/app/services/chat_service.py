@@ -113,20 +113,27 @@ def generate_response(intent, text, session_id, conversation_manager, responses_
     # or if it's a known short greeting Phrase.
     small_talk_intents = ['greeting', 'goodbye', 'thanks', 'about', 'help']
     question_words = ['who', 'what', 'where', 'when', 'why', 'how', 'is', 'can', 'does', 'do', 'search', 'tell me']
+    
+    # Informational Keywords: Phrases that strongly imply a lookup is needed
+    info_keywords = ['pm', 'prime minister', 'president', 'capital', 'population', 'weather', 'news', 'meaning', 'definition', 'price', 'stock', 'birth', 'death', 'distance', 'highest', 'largest', 'smallest']
+    
     has_question_word = any(word in text_lower.split() for word in question_words)
+    has_info_keyword = any(word in text_lower for word in info_keywords)
     
     # Exception: "How are you" and "How is it going" are greetings despite having "how"
     is_greeting_phrase = any(p in text_lower for p in ["how are you", "how's it going", "how is it going", "what's up"])
     
     if intent in small_talk_intents and intent in responses_data:
-        # If it's a greeting phrased as a question (like "how are you"), or if it has NO question words, handle as small talk.
-        if is_greeting_phrase or not has_question_word or len(text.split()) < 3:
+        # If it's a greeting phrased as a question (like "how are you"), handle as small talk.
+        # Otherwise, if it has 1-2 words and NO info/question indicators, handle as small talk.
+        # This prevents "pm of india" (3 words) from being a greeting.
+        if is_greeting_phrase or (not has_question_word and not has_info_keyword and len(text.split()) < 3):
             print(f"Small talk detected: '{intent}' -> returning mapped response")
             return random.choice(responses_data[intent])
 
     # 4. Universal Search Trigger
-    if has_question_word or is_connector:
-        print(f"Question detected: '{refined_text}' -> Triggering Search")
+    if has_question_word or has_info_keyword or is_connector:
+        print(f"Informational query detected: '{refined_text}' -> Triggering Search")
         return search_duckduckgo(refined_text)
 
     # 5. Regex Logic (Math)
@@ -134,7 +141,7 @@ def generate_response(intent, text, session_id, conversation_manager, responses_
         return calculate_math(text)
     
     # 6. Final Fallback
-    # If it's still not handled, try search as last resort if it looks like it might be a query
+    # If it's > 2 words and hasn't been handled, it's likely a query of some kind.
     if len(text.split()) > 2:
         return search_duckduckgo(refined_text)
     
