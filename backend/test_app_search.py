@@ -66,6 +66,29 @@ def test_search_cases():
     res6b = generate_response(intent6b, q6b, session_id, cm, responses_data)
     print(f"Assistant: {res6b}")
 
+    # Case 7: Greeting after search (Regression check for aggressive merging)
+    print("\n--- Testing Greeting after Search ---")
+    session_id_7 = "test_session_aggro"
+    cm7 = ConversationManager()
+    
+    q7a = "who is Elon Musk"
+    print(f"User: {q7a}")
+    intent7a = predict_intent(q7a, model)
+    res7a = generate_response(intent7a, q7a, session_id_7, cm7, responses_data)
+    cm7.add_message(session_id_7, 'user', q7a, intent7a)
+    cm7.add_message(session_id_7, 'assistant', res7a, intent7a)
+    print(f"Assistant: {res7a[:50]}...")
+
+    q7b = "hi"
+    print(f"User: {q7b}")
+    intent7b = predict_intent(q7b, model)
+    res7b = generate_response(intent7b, q7b, session_id_7, cm7, responses_data)
+    print(f"Assistant: {res7b}")
+    if "Wikipedia" in res7b or "Elon Musk" in res7b:
+        print("FAILED: Aggressive merging persists.")
+    else:
+        print("SUCCESS: Greeting handled correctly.")
+
 if __name__ == "__main__":
     # Fix encoding for Windows console if needed
     if sys.platform == 'win32':

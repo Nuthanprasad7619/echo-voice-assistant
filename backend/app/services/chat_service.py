@@ -70,7 +70,11 @@ def generate_response(intent, text, session_id, conversation_manager, responses_
     is_short = len(text.split()) < 5
     is_connector = text_lower.startswith(("in ", "at ", "for ", "with ", "about ", "on ", "and "))
     
-    if is_short or is_connector:
+    # Bug Fix: Skip context merging if the query is a simple greeting or small talk
+    small_talk_intents = ['greeting', 'goodbye', 'thanks', 'about', 'help']
+    is_small_talk = intent in small_talk_intents or text_lower in ["hi", "hello", "hey", "hey there"]
+    
+    if (is_short or is_connector) and not is_small_talk:
         try:
             session = conversation_manager.get_session(session_id)
             history = session.get('history', [])
@@ -104,16 +108,24 @@ def generate_response(intent, text, session_id, conversation_manager, responses_
     elif intent == 'jokes' and ('joke' in text.lower() or 'laugh' in text.lower()):
         return random.choice(responses_data[intent])
 
-    # 3. Small Talk (Greetings, etc.) - PRIORITY IMPROVED
-    # This prevents "How are you" from triggering search
+    # 3. Small Talk (Greetings, etc.) - REFINED PRIORITY
+    # We only return early if it's a CLEAR small talk intent WITHOUT question indicators,
+    # or if it's a known short greeting Phrase.
     small_talk_intents = ['greeting', 'goodbye', 'thanks', 'about', 'help']
+    question_words = ['who', 'what', 'where', 'when', 'why', 'how', 'is', 'can', 'does', 'do', 'search', 'tell me']
+    has_question_word = any(word in text_lower.split() for word in question_words)
+    
+    # Exception: "How are you" and "How is it going" are greetings despite having "how"
+    is_greeting_phrase = any(p in text_lower for p in ["how are you", "how's it going", "how is it going", "what's up"])
+    
     if intent in small_talk_intents and intent in responses_data:
-        print(f"Small talk detected: '{intent}' -> returning mapped response")
-        return random.choice(responses_data[intent])
+        # If it's a greeting phrased as a question (like "how are you"), or if it has NO question words, handle as small talk.
+        if is_greeting_phrase or not has_question_word or len(text.split()) < 3:
+            print(f"Small talk detected: '{intent}' -> returning mapped response")
+            return random.choice(responses_data[intent])
 
     # 4. Universal Search Trigger
-    question_words = ['who', 'what', 'where', 'when', 'why', 'how', 'is', 'can', 'does', 'do', 'search', 'tell me']
-    if any(word in text_lower.split() for word in question_words) or is_connector:
+    if has_question_word or is_connector:
         print(f"Question detected: '{refined_text}' -> Triggering Search")
         return search_duckduckgo(refined_text)
 
