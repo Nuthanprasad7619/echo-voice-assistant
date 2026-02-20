@@ -167,18 +167,49 @@ def search_duckduckgo(query):
         print(f"Error searching DuckDuckGo: {e}")
         return "I'm having trouble connecting to the internet."
 
-def generate_response(intent, text):
-    # 0. High Priority Logic (Identity/Definitions) using Wikipedia
-    # We check this BEFORE intent classifiers because "Who is X" is often misclassified or needs better answers than search snippets.
+def generate_response(intent, text, session_id='default'):
+    # 0. Context Refinement for Follow-up Questions
+    # Check if the current query is a "fragment" (short, starts with dependent words)
+    # and if so, merge with the previous user query.
+    refined_text = text
     text_lower = text.lower()
+    
+    # Heuristic for follow-ups: short length (< 5 words) OR starts with connector words
+    is_short = len(text.split()) < 5
+    is_connector = text_lower.startswith(("in ", "at ", "for ", "with ", "about ", "on ", "and "))
+    
+    if is_short or is_connector:
+        try:
+            session = conversation_manager.get_session(session_id)
+            history = session.get('history', [])
+            
+            # Find last USER message
+            last_user_msg = None
+            for msg in reversed(history):
+                if msg['role'] == 'user':
+                    last_user_msg = msg['message']
+                    break
+            
+            if last_user_msg:
+                # Naive merge: "Previous Query + Current Fragment"
+                # Example: "What do we celebrate on Aug 15" + "in India" -> "What do we celebrate on Aug 15 in India"
+                print(f"Context found. Merging '{last_user_msg}' with '{text}'")
+                refined_text = f"{last_user_msg} {text}"
+                print(f"Refined Query: {refined_text}")
+                text_lower = refined_text.lower() # Update for subsequent checks
+        except Exception as e:
+            print(f"Error in context refinement: {e}")
+
+    # 1. High Priority Logic (Identity/Definitions) using Wikipedia
+    # We check this BEFORE intent classifiers because "Who is X" is often misclassified or needs better answers than search snippets.
     if any(text_lower.startswith(p) for p in ["who is", "what is", "tell me about", "define"]):
-        print(f"Identity question detected: '{text}' -> Trying Wikipedia")
-        wiki_res = search_wikipedia(text)
+        print(f"Identity question detected: '{refined_text}' -> Trying Wikipedia")
+        wiki_res = search_wikipedia(refined_text)
         if wiki_res:
             return f"According to Wikipedia: {wiki_res}"
         # If Wikipedia fails, it falls through to standard search below
 
-    # 1. Dynamic Handlers (Strictly matched first)
+    # 2. Dynamic Handlers (Strictly matched first)
     if intent == 'time':
         return f"It is {datetime.now().strftime('%I:%M %p')}."
     elif intent == 'date':
@@ -186,22 +217,23 @@ def generate_response(intent, text):
     elif intent == 'jokes' and ('joke' in text.lower() or 'laugh' in text.lower()):
         return random.choice(responses_data[intent])
 
-    # 2. Universal Search Trigger
+    # 3. Universal Search Trigger
     question_words = ['who', 'what', 'where', 'when', 'why', 'how', 'is', 'can', 'does', 'do', 'search', 'tell me']
-    if any(word in text_lower.split() for word in question_words):
-        print(f"Question detected: '{text}' -> Triggering Search")
-        return search_duckduckgo(text)
+    # Check refined text for question words too
+    if any(word in text_lower.split() for word in question_words) or is_connector:
+        print(f"Question detected: '{refined_text}' -> Triggering Search")
+        return search_duckduckgo(refined_text)
 
-    # 3. Fallback to ML Intent (Small Talk)
+    # 4. Fallback to ML Intent (Small Talk)
     if intent in responses_data:
         return random.choice(responses_data[intent])
     
-    # 4. Regex Logic (Math)
+    # 5. Regex Logic (Math)
     if 'calculate' in text or re.search(r'\d+\s*[\+\-\*\/]', text):
         return calculate_math(text)
     
-    # 5. Final Fallback (Everything else)
-    return search_duckduckgo(text)
+    # 6. Final Fallback (Everything else)
+    return search_duckduckgo(refined_text)
 
 def calculate_math(text):
     try:
@@ -247,7 +279,7 @@ def process():
         session_id = data.get('session_id', 'default')
         
         intent = predict_intent(command)
-        response = generate_response(intent, command)
+        response = generate_response(intent, command, session_id)
         
         conversation_manager.add_message(session_id, 'user', command, intent)
         conversation_manager.add_message(session_id, 'assistant', response, intent)
