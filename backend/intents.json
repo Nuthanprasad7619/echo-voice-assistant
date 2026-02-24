@@ -3,7 +3,17 @@
     {
       "tag": "greeting",
       "patterns": [
-        "Hi", "Hello", "Hey", "Good morning", "Good afternoon", "Good evening", "What's up", "How are you", "Greetings", "Yo", "Hola"
+        "Hi",
+        "Hello",
+        "Hey",
+        "Good morning",
+        "Good afternoon",
+        "Good evening",
+        "What's up",
+        "How are you",
+        "Greetings",
+        "Yo",
+        "Hola"
       ],
       "responses": [
         "Hello! How can I help you today?",
@@ -15,7 +25,14 @@
     {
       "tag": "goodbye",
       "patterns": [
-        "Bye", "Goodbye", "See you later", "Take care", "Good night", "Exit", "Quit", "Farewell"
+        "Bye",
+        "Goodbye",
+        "See you later",
+        "Take care",
+        "Good night",
+        "Exit",
+        "Quit",
+        "Farewell"
       ],
       "responses": [
         "Goodbye! Have a wonderful day.",
@@ -27,7 +44,12 @@
     {
       "tag": "thanks",
       "patterns": [
-        "Thank you", "Thanks", "Thanks a lot", "I appreciate it", "Ty", "Thx"
+        "Thank you",
+        "Thanks",
+        "Thanks a lot",
+        "I appreciate it",
+        "Ty",
+        "Thx"
       ],
       "responses": [
         "You're welcome!",
@@ -39,7 +61,12 @@
     {
       "tag": "about",
       "patterns": [
-        "Who are you", "What are you", "What is your name", "Are you a robot", "Tell me about yourself", "Who made you"
+        "Who are you",
+        "What are you",
+        "What is your name",
+        "Are you a robot",
+        "Tell me about yourself",
+        "Who made you"
       ],
       "responses": [
         "I am Echo, an advanced AI assistant created to help you.",
@@ -50,7 +77,12 @@
     {
       "tag": "help",
       "patterns": [
-        "Help", "What can you do", "Commands", "Assist me", "How does this work", "Features"
+        "Help",
+        "What can you do",
+        "Commands",
+        "Assist me",
+        "How does this work",
+        "Features"
       ],
       "responses": [
         "I can answer questions, search Wikipedia, tell jokes, and more. Just ask!",
@@ -61,7 +93,11 @@
     {
       "tag": "jokes",
       "patterns": [
-        "Tell me a joke", "Make me laugh", "Say something funny", "Do you know any jokes", "Crack a joke"
+        "Tell me a joke",
+        "Make me laugh",
+        "Say something funny",
+        "Do you know any jokes",
+        "Crack a joke"
       ],
       "responses": [
         "Why don't scientists trust atoms? Because they make up everything!",
@@ -73,7 +109,11 @@
     {
       "tag": "time",
       "patterns": [
-        "What time is it", "Current time", "Tell me the time", "Do you have the time"
+        "What time is it",
+        "Current time",
+        "Tell me the time",
+        "Do you have the time",
+        "what's the time now"
       ],
       "responses": [
         "The current time is {time}.",
@@ -83,7 +123,10 @@
     {
       "tag": "date",
       "patterns": [
-        "What is the date", "Today's date", "What day is it", "Current date"
+        "What is the date",
+        "Today's date",
+        "What day is it",
+        "Current date"
       ],
       "responses": [
         "Today is {date}.",
@@ -91,14 +134,22 @@
       ]
     },
     {
-        "tag": "wikipedia_search",
-        "patterns": [
-            "Who is", "What is", "Tell me about", "Information on", "Define", "Explain", "Search for"
-        ],
-        "responses": [
-            "Searching Wikipedia for...",
-            "Here is what I found on Wikipedia..."
-        ]
+      "tag": "wikipedia_search",
+      "patterns": [
+        "Who is",
+        "What is",
+        "Tell me about",
+        "Information on",
+        "Define",
+        "Explain",
+        "Search for",
+        "Info about",
+        "information about"
+      ],
+      "responses": [
+        "Searching Wikipedia for...",
+        "Here is what I found on Wikipedia..."
+      ]
     }
   ]
 }
