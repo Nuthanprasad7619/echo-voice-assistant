@@ -1,8 +1,8 @@
 import os
 import joblib
-from backend.app import create_app
-from backend.app.routes import register_routes
-from backend.app.services.chat_service import ConversationManager
+from backend.core import create_app
+from backend.core.routes import register_routes
+from backend.core.services.chat_service import ConversationManager
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.join(os.path.dirname(BASE_DIR), 'frontend')
